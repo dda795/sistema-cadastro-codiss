@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Responsáveis - IFPI</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">IFPI</div>
+
+        <nav>
+            <a href="/">Início</a>
+            <a href="/cadastro">Cadastro</a>
+        </nav>
+    </header>
+
+    <main class="inicio">
+
+        <div class="conteudo">
+
+            <span class="tag">SISTEMA INSTITUCIONAL</span>
+
+            <h1>
+                Cadastro de<br>
+                <strong>Responsáveis</strong>
+            </h1>
+
+            <p>
+                Aluno, realize seu cadastro para que a instituição
+                possa manter os dados de contato do seu responsável
+                atualizados.
+            </p>
+
+            <a class="botao" href="/cadastro">
+                Fazer meu cadastro →
+            </a>
+
+        </div>
+
+        <div class="card-info">
+            <div class="icone">👨‍🎓</div>
+
+            <h2>Cadastro do aluno</h2>
+
+            <p>
+                Tenha em mãos sua matrícula e os dados
+                do seu pai ou responsável.
+            </p>
+
+            <div class="seguranca">
+                🔒 Dados destinados exclusivamente à instituição.
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

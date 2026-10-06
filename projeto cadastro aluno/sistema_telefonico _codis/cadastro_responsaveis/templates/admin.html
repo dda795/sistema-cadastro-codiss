@@ -1,0 +1,530 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Painel Administrativo - IFPI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <style>
+
+        .parentesco {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .coluna-acoes {
+            min-width: 210px;
+            white-space: nowrap;
+        }
+
+        .acoes {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .botao-editar {
+            display: inline-block !important;
+            background: #126b45 !important;
+            color: white !important;
+            padding: 8px 12px;
+            border-radius: 7px;
+            text-decoration: none !important;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .botao-excluir {
+            display: inline-block !important;
+            background: #b42318 !important;
+            color: white !important;
+            padding: 8px 12px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .coluna-acoes form {
+            display: inline-block !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        .numero-aluno {
+            font-weight: bold;
+            color: #126b45;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        IFPI
+    </div>
+
+    <div class="admin-titulo">
+        Área Administrativa — CODIS
+    </div>
+
+</header>
+
+
+<main class="admin">
+
+
+    <div class="admin-topo">
+
+        <span class="tag">
+            PAINEL ADMINISTRATIVO
+        </span>
+
+        <h1>
+            Cadastro de <strong>Responsáveis</strong>
+        </h1>
+
+        <p>
+            Acompanhamento dos cadastros dos alunos de todas as turmas.
+        </p>
+
+    </div>
+
+
+    <!-- ESTATÍSTICAS -->
+
+    <section class="estatisticas">
+
+        <div class="card-estatistica">
+
+            <span class="icone-estatistica">
+                👨‍🎓
+            </span>
+
+            <div>
+
+                <span class="numero-estatistica">
+                    {{ total_alunos }}
+                </span>
+
+                <span class="nome-estatistica">
+                    Total de alunos
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-estatistica">
+
+            <span class="icone-estatistica">
+                ✅
+            </span>
+
+            <div>
+
+                <span class="numero-estatistica">
+                    {{ cadastrados }}
+                </span>
+
+                <span class="nome-estatistica">
+                    Cadastros realizados
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-estatistica">
+
+            <span class="icone-estatistica">
+                ⏳
+            </span>
+
+            <div>
+
+                <span class="numero-estatistica">
+                    {{ pendentes }}
+                </span>
+
+                <span class="nome-estatistica">
+                    Cadastros pendentes
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FILTROS -->
+
+    <section class="filtros">
+
+        <div class="campo-pesquisa">
+
+            <label for="pesquisa">
+                🔍 Pesquisar
+            </label>
+
+            <input
+                type="text"
+                id="pesquisa"
+                placeholder="Pesquisar por nome ou matrícula..."
+            >
+
+        </div>
+
+
+        <div class="campo-turma">
+
+            <label for="filtroTurma">
+                🏫 Turma
+            </label>
+
+            <select id="filtroTurma">
+
+                <option value="">
+                    Todas as turmas
+                </option>
+
+                {% for turma in turmas %}
+
+                    <option value="{{ turma }}">
+                        {{ turma }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+    </section>
+
+
+    <!-- TABELA -->
+
+    <section class="tabela">
+
+        <table class="tabela-alunos">
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+
+                    <th>Matrícula</th>
+
+                    <th>Aluno</th>
+
+                    <th>Turma</th>
+
+                    <th>Status</th>
+
+                    <th>Responsável</th>
+
+                    <th>Parentesco</th>
+
+                    <th>Telefone</th>
+
+                    <th>Ações</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                {% for aluno in alunos %}
+
+
+                <tr
+                    class="linha-aluno"
+                    data-turma="{{ aluno.turma }}"
+                >
+
+
+                    <!-- NÚMERO -->
+
+                    <td class="numero-aluno">
+                        {{ loop.index }}
+                    </td>
+
+
+                    <!-- MATRÍCULA -->
+
+                    <td>
+                        {{ aluno.matricula }}
+                    </td>
+
+
+                    <!-- ALUNO -->
+
+                    <td class="nome-aluno">
+                        {{ aluno.nome }}
+                    </td>
+
+
+                    <!-- TURMA -->
+
+                    <td>
+                        <span class="turma-aluno">
+                            {{ aluno.turma }}
+                        </span>
+                    </td>
+
+
+                    <!-- STATUS -->
+
+                    <td>
+
+                        {% if aluno.cadastrado %}
+
+                            <span class="status cadastrado">
+                                ✓ Cadastrado
+                            </span>
+
+                        {% else %}
+
+                            <span class="status pendente">
+                                Pendente
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- RESPONSÁVEL -->
+
+                    <td>
+
+                        {% if aluno.cadastrado %}
+
+                            <div class="responsavel">
+                                {{ aluno.cadastro.responsavel }}
+                            </div>
+
+                        {% else %}
+
+                            <span class="sem-dados">
+                                —
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- PARENTESCO -->
+
+                    <td>
+
+                        {% if aluno.cadastrado %}
+
+                            <div class="parentesco">
+                                {{ aluno.cadastro.parentesco or "—" }}
+                            </div>
+
+                        {% else %}
+
+                            <span class="sem-dados">
+                                —
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- TELEFONE -->
+
+                    <td>
+
+                        {% if aluno.cadastrado %}
+
+                            <div class="telefone">
+                                {{ aluno.cadastro.telefone }}
+                            </div>
+
+                        {% else %}
+
+                            <span class="sem-dados">
+                                —
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- AÇÕES -->
+
+                    <td class="coluna-acoes">
+
+
+                        {% if aluno.cadastrado %}
+
+
+                            <div class="acoes">
+
+
+                                <a
+                                    href="{{ url_for('editar_cadastro', matricula=aluno.matricula) }}"
+                                    class="botao-editar"
+                                >
+                                    ✏️ Editar
+                                </a>
+
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('excluir_cadastro', matricula=aluno.matricula) }}"
+                                    onsubmit="return confirm('Tem certeza que deseja excluir este cadastro?');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="botao-excluir"
+                                    >
+                                        🗑️ Excluir
+                                    </button>
+
+                                </form>
+
+
+                            </div>
+
+
+                        {% else %}
+
+
+                            <span class="sem-dados">
+                                Cadastro pendente
+                            </span>
+
+
+                        {% endif %}
+
+
+                    </td>
+
+
+                </tr>
+
+
+                {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+
+</main>
+
+
+<script>
+
+    const pesquisa =
+        document.getElementById("pesquisa");
+
+    const filtroTurma =
+        document.getElementById("filtroTurma");
+
+    const alunos =
+        document.querySelectorAll(".linha-aluno");
+
+
+    function filtrarAlunos() {
+
+        const texto =
+            pesquisa.value
+                .toLowerCase()
+                .trim();
+
+        const turmaSelecionada =
+            filtroTurma.value;
+
+
+        alunos.forEach(function (linha) {
+
+            const conteudo =
+                linha.textContent.toLowerCase();
+
+            const turma =
+                linha.dataset.turma;
+
+
+            const correspondePesquisa =
+                conteudo.includes(texto);
+
+            const correspondeTurma =
+                !turmaSelecionada ||
+                turma === turmaSelecionada;
+
+
+            if (
+                correspondePesquisa &&
+                correspondeTurma
+            ) {
+
+                linha.style.display = "";
+
+            } else {
+
+                linha.style.display = "none";
+
+            }
+
+        });
+
+    }
+
+
+    pesquisa.addEventListener(
+        "input",
+        filtrarAlunos
+    );
+
+
+    filtroTurma.addEventListener(
+        "change",
+        filtrarAlunos
+    );
+
+</script>
+
+
+</body>
+
+</html>
+

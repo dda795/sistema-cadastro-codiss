@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Editar Cadastro - IFPI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <style>
+
+        .campo-desabilitado {
+            background: #f5f5f5;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .botoes-formulario {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .botao-salvar {
+            flex: 1;
+        }
+
+        .botao-cancelar {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #e9eceb;
+            color: #333;
+            padding: 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .botao-cancelar:hover {
+            background: #dce2df;
+        }
+
+        .informacao-aluno {
+            background: #edf7f1;
+            border: 1px solid #cce9d9;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 28px;
+        }
+
+        .informacao-aluno p {
+            color: #555;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+
+        .informacao-aluno strong {
+            color: #126b45;
+        }
+
+        @media (max-width: 600px) {
+
+            .botoes-formulario {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        IFPI
+    </div>
+
+    <nav>
+
+        <a href="/admin">
+            Painel
+        </a>
+
+        <a href="/">
+            Início
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main class="formulario">
+
+
+    <div class="form-card">
+
+
+        <span class="tag">
+            ÁREA ADMINISTRATIVA
+        </span>
+
+
+        <h1>
+            Editar <strong>Cadastro</strong>
+        </h1>
+
+
+        <p class="descricao">
+            Atualize os dados do responsável pelo aluno.
+        </p>
+
+
+        <!-- INFORMAÇÕES DO ALUNO -->
+
+        <div class="informacao-aluno">
+
+            <p>
+
+                <strong>Aluno:</strong>
+
+                {{ nome }}
+
+            </p>
+
+
+            <p>
+
+                <strong>Matrícula:</strong>
+
+                {{ matricula }}
+
+            </p>
+
+
+            <p>
+
+                <strong>Turma:</strong>
+
+                {{ turma }}
+
+            </p>
+
+        </div>
+
+
+        <!-- FORMULÁRIO -->
+
+        <form
+            method="POST"
+            action="{{ url_for('editar_cadastro', matricula=matricula) }}"
+        >
+
+
+            <!-- RESPONSÁVEL -->
+
+            <label for="responsavel">
+
+                Nome do pai ou responsável
+
+            </label>
+
+
+            <input
+                type="text"
+                id="responsavel"
+                name="responsavel"
+                value="{{ cadastro.responsavel }}"
+                placeholder="Nome completo do responsável"
+                required
+            >
+
+
+            <!-- PARENTESCO -->
+
+            <label for="parentesco">
+
+                Parentesco
+
+            </label>
+
+
+            <select
+                id="parentesco"
+                name="parentesco"
+                required
+            >
+
+                <option value="">
+
+                    Selecione o parentesco
+
+                </option>
+
+
+                {% for parentesco in parentescos %}
+
+                    <option
+                        value="{{ parentesco }}"
+                        {% if cadastro.parentesco == parentesco %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ parentesco }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- TELEFONE -->
+
+            <label for="telefone">
+
+                Telefone do responsável
+
+            </label>
+
+
+            <input
+                type="tel"
+                id="telefone"
+                name="telefone"
+                value="{{ cadastro.telefone }}"
+                placeholder="(00) 00000-0000"
+                maxlength="15"
+                required
+            >
+
+
+            <!-- BOTÕES -->
+
+            <div class="botoes-formulario">
+
+
+                <a
+                    href="{{ url_for('admin') }}"
+                    class="botao-cancelar"
+                >
+
+                    Cancelar
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="botao-salvar"
+                >
+
+                    Salvar alterações
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</main>
+
+
+<!-- MÁSCARA DO TELEFONE -->
+
+<script>
+
+    const telefone =
+        document.getElementById("telefone");
+
+
+    telefone.addEventListener(
+        "input",
+        function () {
+
+            let valor =
+                telefone.value.replace(/\D/g, "");
+
+
+            if (valor.length > 11) {
+
+                valor =
+                    valor.substring(0, 11);
+
+            }
+
+
+            if (valor.length <= 10) {
+
+                valor = valor.replace(
+                    /^(\d{2})(\d{4})(\d{0,4})$/,
+                    "($1) $2-$3"
+                );
+
+            } else {
+
+                valor = valor.replace(
+                    /^(\d{2})(\d{5})(\d{0,4})$/,
+                    "($1) $2-$3"
+                );
+
+            }
+
+
+            telefone.value = valor;
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>
+

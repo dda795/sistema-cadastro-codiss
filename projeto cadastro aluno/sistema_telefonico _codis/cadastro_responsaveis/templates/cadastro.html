@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cadastro do Aluno - IFPI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <style>
+
+        .resultado-aluno {
+            display: none;
+            background: #edf7f1;
+            border: 1px solid #cce9d9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: -10px;
+            margin-bottom: 22px;
+            color: #126b45;
+        }
+
+        .resultado-aluno strong {
+            display: block;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+
+        .erro-aluno {
+            display: none;
+            background: #fff0f0;
+            border: 1px solid #f0cccc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: -10px;
+            margin-bottom: 22px;
+            color: #b42318;
+        }
+
+        .campo-desabilitado {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="logo">
+        IFPI
+    </div>
+
+    <nav>
+
+        <a href="/">
+            Início
+        </a>
+
+    </nav>
+
+</header>
+
+
+<main class="formulario">
+
+
+    <div class="form-card">
+
+
+        <span class="tag">
+            CADASTRO
+        </span>
+
+
+        <h1>
+            Dados do aluno
+        </h1>
+
+
+        <p class="descricao">
+
+            Informe sua matrícula para localizar
+            seus dados e depois preencha as
+            informações do responsável.
+
+        </p>
+
+
+        <form method="POST">
+
+
+            <!-- MATRÍCULA -->
+
+            <label for="matricula">
+                Matrícula
+            </label>
+
+            <input
+                type="text"
+                id="matricula"
+                name="matricula"
+                placeholder="Digite sua matrícula"
+                required
+                autocomplete="off"
+            >
+
+
+            <!-- RESULTADO DA BUSCA -->
+
+            <div
+                id="resultadoAluno"
+                class="resultado-aluno"
+            >
+
+                ✓ Aluno encontrado:
+
+                <strong id="nomeAluno"></strong>
+
+            </div>
+
+
+            <div
+                id="erroAluno"
+                class="erro-aluno"
+            >
+
+                Matrícula não encontrada.
+                Verifique se você digitou corretamente.
+
+            </div>
+
+
+            <!-- TURMA -->
+
+            <label for="turma">
+                Turma
+            </label>
+
+            <input
+                type="text"
+                id="turma"
+                name="turma"
+                value=""
+                readonly
+                class="campo-desabilitado"
+            >
+
+
+            <!-- RESPONSÁVEL -->
+
+            <label for="responsavel">
+                Nome do pai ou responsável
+            </label>
+
+            <input
+                type="text"
+                id="responsavel"
+                name="responsavel"
+                placeholder="Nome completo do responsável"
+                required
+            >
+
+
+            <!-- PARENTESCO -->
+<!-- PARENTESCO -->
+
+<label for="parentesco">
+    Parentesco
+</label>
+
+<select
+    id="parentesco"
+    name="parentesco"
+    required
+>
+    <option value="">Selecione o parentesco</option>
+    <option value="Pai">Pai</option>
+    <option value="Mãe">Mãe</option>
+    <option value="Avô">Avô</option>
+    <option value="Avó">Avó</option>
+    <option value="Irmão">Irmão</option>
+    <option value="Irmã">Irmã</option>
+    <option value="Tio">Tio</option>
+    <option value="Tia">Tia</option>
+    <option value="Responsável legal">Responsável legal</option>
+    <option value="Outro">Outro</option>
+</select>
+
+            <!-- TELEFONE -->
+
+            <label for="telefone">
+                Telefone do responsável
+            </label>
+
+            <input
+                type="tel"
+                id="telefone"
+                name="telefone"
+                placeholder="(00) 00000-0000"
+                maxlength="15"
+                required
+            >
+
+
+            <button
+                type="submit"
+                id="botaoEnviar"
+            >
+                Enviar cadastro
+            </button>
+
+
+        </form>
+
+
+    </div>
+
+
+</main>
+
+
+<script>
+
+
+const matricula =
+    document.getElementById("matricula");
+
+
+const resultadoAluno =
+    document.getElementById("resultadoAluno");
+
+
+const nomeAluno =
+    document.getElementById("nomeAluno");
+
+
+const turma =
+    document.getElementById("turma");
+
+
+const erroAluno =
+    document.getElementById("erroAluno");
+
+
+const botaoEnviar =
+    document.getElementById("botaoEnviar");
+
+
+const telefone =
+    document.getElementById("telefone");
+
+
+
+matricula.addEventListener(
+    "blur",
+    buscarAluno
+);
+
+
+
+async function buscarAluno() {
+
+
+    const valor =
+        matricula.value.trim();
+
+
+    resultadoAluno.style.display =
+        "none";
+
+
+    erroAluno.style.display =
+        "none";
+
+
+    botaoEnviar.disabled =
+        true;
+
+
+    if (!valor) {
+
+        return;
+
+    }
+
+
+    try {
+
+
+        const resposta =
+            await fetch(
+                `/buscar-aluno?matricula=${encodeURIComponent(valor)}`
+            );
+
+
+        const dados =
+            await resposta.json();
+
+
+        if (dados.encontrado) {
+
+
+            nomeAluno.textContent =
+                dados.nome;
+
+
+            turma.value =
+                dados.turma;
+
+
+            resultadoAluno.style.display =
+                "block";
+
+
+            botaoEnviar.disabled =
+                false;
+
+
+        } else {
+
+
+            turma.value = "";
+
+            erroAluno.style.display =
+                "block";
+
+
+        }
+
+
+    } catch (erro) {
+
+
+        erroAluno.textContent =
+            "Não foi possível consultar a matrícula.";
+
+
+        erroAluno.style.display =
+            "block";
+
+
+    }
+
+}
+
+
+
+/* MÁSCARA DO TELEFONE */
+
+telefone.addEventListener(
+    "input",
+    function () {
+
+        let valor =
+            telefone.value.replace(/\D/g, "");
+
+        if (valor.length > 11) {
+            valor = valor.substring(0, 11);
+        }
+
+        if (valor.length <= 10) {
+
+            valor = valor.replace(
+                /^(\d{2})(\d{4})(\d{0,4}).*/,
+                "($1) $2-$3"
+            );
+
+        } else {
+
+            valor = valor.replace(
+                /^(\d{2})(\d{5})(\d{0,4}).*/,
+                "($1) $2-$3"
+            );
+
+        }
+
+        telefone.value = valor;
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>
